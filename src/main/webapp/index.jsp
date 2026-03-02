@@ -4,328 +4,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SLIIT | Centralized CourseWeb</title>
+    <title>SLIIT Eduall | Central Registration Portal</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
-            --sliit-navy: #1e1b4b;
-            --sliit-blue: #3730a3;
-            --sliit-orange: #f59e0b;
-            --bg-body: #f4f7fe;
-            --bg-card: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
+            --theme-blue: #0F2239;    /* Eduall Dark Blue */
+            --theme-orange: #FF5E14;  /* Eduall Orange */
+            --theme-gray: #6B7385;
+            --bg-color: #F8F4F0;      /* Eduall Light Background */
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); overflow-x: hidden; }
 
-        /* --- Sleek Navbar --- */
-        .top-navbar {
-            background-color: var(--bg-card);
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-        }
-        .nav-brand {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--sliit-navy);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-        }
-        .nav-brand i { color: var(--sliit-orange); margin-right: 10px; font-size: 28px; }
+        /* --- Eduall Topbar & Navbar --- */
+        .topbar { background-color: var(--theme-blue); color: white; padding: 10px 0; font-size: 14px; }
+        .topbar i { color: var(--theme-orange); margin-right: 8px; }
+        .navbar-custom { background-color: white; padding: 15px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .navbar-brand { font-weight: 800; color: var(--theme-blue) !important; font-size: 26px; }
+        .navbar-brand span { color: var(--theme-orange); }
+        .nav-link { color: var(--theme-blue); font-weight: 500; margin: 0 10px; transition: 0.3s; }
+        .nav-link:hover { color: var(--theme-orange); }
 
-        .btn-system-login {
-            background-color: var(--bg-body);
-            color: var(--sliit-navy);
-            border: 1px solid var(--border-light);
-            font-weight: 600;
-            padding: 10px 25px;
-            border-radius: 12px;
-            transition: 0.3s;
-            font-size: 14px;
-        }
-        .btn-system-login:hover {
-            background-color: #e0e7ff;
-            color: var(--sliit-blue);
-        }
+        /* --- Hero Section (Exact Clone) --- */
+        .hero-section { padding: 80px 0; position: relative; }
+        .hero-badge { display: inline-block; background: rgba(255, 94, 20, 0.1); color: var(--theme-orange); font-weight: 600; padding: 8px 20px; border-radius: 30px; margin-bottom: 20px; font-size: 14px; }
+        .hero-title { font-size: 3.8rem; font-weight: 800; color: var(--theme-blue); line-height: 1.2; margin-bottom: 25px; }
+        .hero-title span { color: var(--theme-orange); position: relative; }
+        .hero-title span::after { content: ''; position: absolute; left: 0; bottom: 5px; width: 100%; height: 8px; background-color: rgba(255, 94, 20, 0.2); z-index: -1; }
+        .hero-text { color: var(--theme-gray); font-size: 1.1rem; margin-bottom: 35px; line-height: 1.7; max-width: 90%; }
 
-        /* --- Main Layout --- */
-        .portal-wrapper { flex: 1; padding: 60px 0; }
+        .btn-theme-primary { background-color: var(--theme-orange); color: white; padding: 15px 35px; border-radius: 8px; font-weight: 600; border: none; transition: 0.3s; }
+        .btn-theme-primary:hover { background-color: var(--theme-blue); color: white; transform: translateY(-3px); }
 
-        /* --- The "New Student" Clarification Banner --- */
-        .admission-banner {
-            background: white;
-            border: 1px dashed var(--sliit-blue);
-            border-radius: 16px;
-            padding: 20px 25px;
-            margin-bottom: 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 10px 30px rgba(55, 48, 163, 0.05);
-        }
-        .admission-info { display: flex; align-items: center; gap: 15px; }
-        .admission-icon {
-            width: 50px; height: 50px;
-            background: #e0e7ff; color: var(--sliit-blue);
-            border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px;
-        }
-        .btn-admission {
-            background: var(--sliit-blue); color: white;
-            padding: 10px 20px; border-radius: 10px; font-weight: 600;
-            border: none; font-size: 13px; transition: 0.3s;
-        }
-        .btn-admission:hover { background: var(--sliit-navy); transform: translateY(-2px); }
+        /* Hero Image & Floating Badges */
+        .hero-img-box { position: relative; text-align: right; z-index: 1; }
+        .hero-img { width: 90%; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
 
-        /* --- Hero Section --- */
-        .hero-badge {
-            background: white; color: var(--sliit-orange);
-            padding: 8px 20px; border-radius: 30px;
-            font-weight: 600; font-size: 13px; display: inline-block;
-            margin-bottom: 20px; border: 1px solid #fef3c7;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);
-        }
-        .hero-title { font-size: 48px; font-weight: 800; line-height: 1.2; margin-bottom: 20px; color: var(--sliit-navy); }
-        .hero-title span { color: var(--sliit-orange); }
-        .hero-desc { color: var(--text-muted); font-size: 15px; margin-bottom: 40px; line-height: 1.6; max-width: 90%; }
+        .float-badge-1 { position: absolute; bottom: 10%; left: -30px; background: white; padding: 15px 25px; border-radius: 12px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px; animation: float 4s ease-in-out infinite; }
+        .avatar-group img { width: 40px; height: 40px; border-radius: 50%; border: 3px solid white; margin-left: -15px; }
+        .avatar-group img:first-child { margin-left: 0; }
 
-        /* --- Modern Module Cards --- */
-        .module-card {
-            background: var(--bg-card);
-            border-radius: 24px;
-            padding: 35px 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-            transition: 0.3s;
-            height: 100%;
-            border: 1px solid rgba(255,255,255,0.5);
-            cursor: pointer;
-            text-decoration: none;
-            display: block;
-            position: relative;
-        }
-        .module-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(30, 27, 75, 0.08); }
+        .float-badge-2 { position: absolute; top: 15%; right: 20px; background: white; padding: 15px 25px; border-radius: 12px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-left: 5px solid var(--theme-orange); animation: float 5s ease-in-out infinite reverse; }
 
-        .icon-box {
-            width: 60px; height: 60px; border-radius: 16px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px; margin-bottom: 20px;
-        }
+        @keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0); } }
 
-        .card-enroll .icon-box { background: #fef3c7; color: var(--sliit-orange); }
-        .card-admin .icon-box { background: #e0e7ff; color: var(--sliit-blue); }
-        .card-waitlist .icon-box { background: #dcfce7; color: #16a34a; }
+        /* --- Portals Section (Features) --- */
+        .portal-section { padding: 60px 0 100px; }
+        .section-title { text-align: center; margin-bottom: 50px; }
+        .section-title h5 { color: var(--theme-orange); font-weight: 600; }
+        .section-title h2 { color: var(--theme-blue); font-weight: 800; font-size: 2.5rem; }
 
-        .module-card h4 { font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 10px; }
-        .module-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 0; }
+        .feature-card { background: white; padding: 40px 30px; border-radius: 15px; text-align: left; box-shadow: 0 5px 20px rgba(0,0,0,0.03); border: 1px solid #f0f0f0; transition: all 0.4s ease; height: 100%; position: relative; overflow: hidden; }
+        .feature-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); border-color: rgba(255, 94, 20, 0.3); }
 
-        .secure-badge { position: absolute; top: 25px; right: 25px; color: var(--text-muted); font-size: 14px; }
+        .feature-icon { width: 70px; height: 70px; background: rgba(255, 94, 20, 0.1); color: var(--theme-orange); font-size: 30px; display: flex; align-items: center; justify-content: center; border-radius: 12px; margin-bottom: 25px; transition: 0.3s; }
+        .feature-card:hover .feature-icon { background: var(--theme-orange); color: white; }
 
-        /* --- Secure Login Modal --- */
-        .modal-content { border-radius: 24px; border: none; box-shadow: 0 20px 50px rgba(30, 27, 75, 0.15); }
-        .modal-header { border-bottom: none; padding: 25px 25px 0 25px; }
-        .modal-body { padding: 25px; }
-        .form-control { border-radius: 12px; padding: 14px 18px; background-color: var(--bg-body); border: 1px solid var(--border-light); font-size: 14px; }
-        .form-control:focus { background-color: white; border-color: var(--sliit-blue); box-shadow: 0 0 0 4px rgba(55, 48, 163, 0.1); }
-        .btn-login-submit { background-color: var(--sliit-navy); color: white; border-radius: 12px; padding: 14px; font-weight: 600; width: 100%; border: none; transition: 0.3s; }
-        .btn-login-submit:hover { background-color: var(--sliit-blue); }
+        .feature-card h4 { color: var(--theme-blue); font-weight: 700; margin-bottom: 15px; font-size: 1.3rem; }
+        .feature-card p { color: var(--theme-gray); font-size: 0.95rem; margin-bottom: 25px; line-height: 1.6; }
 
-        footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px; }
+        .btn-link-custom { color: var(--theme-blue); font-weight: 600; text-decoration: none; border-bottom: 2px solid transparent; padding-bottom: 2px; transition: 0.3s; background: none; border: none; padding: 0; }
+        .btn-link-custom:hover { color: var(--theme-orange); border-bottom-color: var(--theme-orange); }
+
+        /* Secure Badge overlay */
+        .secure-badge { position: absolute; top: 20px; right: 20px; color: #ccc; font-size: 1.2rem; }
+
+        /* Modal Customization */
+        .modal-content { border-radius: 15px; border: none; }
+        .modal-header { background-color: var(--theme-blue); color: white; }
     </style>
 </head>
 <body>
 
-<nav class="top-navbar">
-    <a class="nav-brand" href="#">
-        <i class="fa-solid fa-layer-group"></i> SLIIT<span style="font-weight: 400; color: #64748b; margin-left:5px;">Portal</span>
-    </a>
-    <button class="btn-system-login d-none d-md-block" onclick="openLoginModal('${pageContext.request.contextPath}/register')">
-        <i class="fa-solid fa-shield-halved me-2 text-success"></i> System Admin
-    </button>
-</nav>
-
-<div class="portal-wrapper">
+<div class="topbar d-none d-lg-block">
     <div class="container">
-
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="admission-banner flex-column flex-md-row text-center text-md-start">
-                    <div class="admission-info mb-3 mb-md-0">
-                        <div class="admission-icon"><i class="fa-solid fa-user-plus"></i></div>
-                        <div>
-                            <h6 class="mb-1 fw-bold" style="color: var(--sliit-navy); font-size: 15px;">New Student Admissions</h6>
-                            <p class="mb-0 text-muted" style="font-size: 13px;">Are you looking to join SLIIT for the first time? Apply via the Admissions Portal.</p>
-                        </div>
-                    </div>
-                    <button class="btn-admission" onclick="showAdmissionAlert()">
-                        Apply for 2026 Intake <i class="fa-solid fa-external-link-alt ms-1"></i>
-                    </button>
-                </div>
+        <div class="row">
+            <div class="col-md-8">
+                <span class="me-4"><i class="fas fa-envelope"></i> admin@sliit.lk</span>
+                <span><i class="fas fa-phone-alt"></i> +94 11 241 3900</span>
             </div>
-        </div>
-
-        <div class="row align-items-center mt-4">
-
-            <div class="col-lg-5 mb-5 mb-lg-0 pe-lg-5 text-center text-lg-start">
-                <div class="hero-badge">
-                    <i class="fa-solid fa-code-branch me-2"></i> Active Student Portal V2.0
-                </div>
-                <h1 class="hero-title">Semester Module<br><span>Registration</span><br>System.</h1>
-                <p class="hero-desc">
-                    Strictly for currently enrolled students. Manage your academic modules for the upcoming semester. Features real-time FIFO Queues and Backend File Management.
-                </p>
-                <div class="d-flex align-items-center justify-content-center justify-content-lg-start mt-4">
-                    <div style="width: 45px; height: 45px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-right: 15px;">
-                        <i class="fa-solid fa-check text-success"></i>
-                    </div>
-                    <div style="font-size: 13px; font-weight: 600; color: var(--text-main);">
-                        Academic Year: <span style="color: var(--sliit-orange);">2025/2026</span>
-                    </div>
-                </div>
+            <div class="col-md-4 text-end">
+                <span class="me-3"><i class="fas fa-map-marker-alt"></i> New Kandy Rd, Malabe</span>
             </div>
-
-            <div class="col-lg-7">
-                <div class="row g-4">
-
-                    <div class="col-md-6">
-                        <a href="course-enrollment.jsp" class="module-card card-enroll">
-                            <div class="icon-box"><i class="fa-solid fa-pen-to-square"></i></div>
-                            <h4>Module Enrollment</h4>
-                            <p>Access the student workspace to select and register for semester modules.</p>
-                            <div class="mt-4" style="font-size: 13px; font-weight: 700; color: var(--sliit-orange);">
-                                Enter Workspace <i class="fa-solid fa-arrow-right ms-1"></i>
-                            </div>
-                        </a>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="module-card card-admin" onclick="openLoginModal('${pageContext.request.contextPath}/register')">
-                            <div class="secure-badge"><i class="fa-solid fa-lock"></i></div>
-                            <div class="icon-box"><i class="fa-solid fa-users-gear"></i></div>
-                            <h4>Admin Dashboard</h4>
-                            <p>Backend access to view and manage Insertion Sorted student data.</p>
-                            <div class="mt-4" style="font-size: 13px; font-weight: 700; color: var(--sliit-blue);">
-                                Secure Login <i class="fa-solid fa-arrow-right ms-1"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 offset-md-3">
-                        <div class="module-card card-waitlist" onclick="openLoginModal('waitlist-status.jsp')">
-                            <div class="secure-badge"><i class="fa-solid fa-lock"></i></div>
-                            <div class="icon-box"><i class="fa-solid fa-hourglass-half"></i></div>
-                            <h4>System Waitlist</h4>
-                            <p>Management view of the strict FIFO Queue structure for full capacity modules.</p>
-                            <div class="mt-4" style="font-size: 13px; font-weight: 700; color: #16a34a;">
-                                Secure Login <i class="fa-solid fa-arrow-right ms-1"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
         </div>
     </div>
 </div>
 
-<footer>
+<nav class="navbar navbar-expand-lg navbar-custom sticky-top">
     <div class="container">
-        &copy; 2026 Course Management System. Designed by Umesh Tharuka.
+        <a class="navbar-brand" href="index.jsp">SLIIT<span>.Eduall</span></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Modules</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Admissions</a></li>
+            </ul>
+            <a href="#portals" class="btn btn-theme-primary px-4 py-2" style="border-radius: 5px;">Get Started</a>
+        </div>
     </div>
-</footer>
+</nav>
 
-<div class="modal fade" id="adminLoginModal" tabindex="-1" aria-hidden="true">
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <span class="hero-badge"><i class="fas fa-award me-2"></i> Semester 2026 Registration</span>
+                <h1 class="hero-title">Centralized Module <br><span>Registration System</span></h1>
+                <p class="hero-text">Welcome to the EduAll-powered academic gateway. Seamlessly manage module enrollments, waitlists, and system analytics powered by advanced Queue and Sorting algorithms.</p>
+                <div>
+                    <a href="course-enrollment.jsp" class="btn btn-theme-primary me-3">Enroll Now <i class="fas fa-arrow-right ms-2"></i></a>
+                    <button onclick="openAuthModal('admin')" class="btn" style="background: white; border: 2px solid var(--theme-blue); color: var(--theme-blue); padding: 13px 30px; border-radius: 8px; font-weight: 600;">Admin Login</button>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="hero-img-box">
+                    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Students" class="hero-img">
+
+                    <div class="float-badge-1">
+                        <div class="avatar-group">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="user">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="user">
+                            <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="user">
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold" style="color: var(--theme-blue);">1,245+</h6>
+                            <small class="text-muted">Enrolled Students</small>
+                        </div>
+                    </div>
+
+                    <div class="float-badge-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="fas fa-satellite-dish fs-3" style="color: var(--theme-orange);"></i>
+                            <div>
+                                <h6 class="mb-0 fw-bold" style="color: var(--theme-blue);">Live Queue</h6>
+                                <small class="text-muted">Radar Active</small>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section id="portals" class="portal-section">
+    <div class="container">
+        <div class="section-title">
+            <h5>EXPLORE PORTALS</h5>
+            <h2>Choose Your Workspace</h2>
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-lg-3 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-user-graduate"></i></div>
+                    <h4>Student Portal</h4>
+                    <p>Access your dashboard to register for modules and check enrollment status.</p>
+                    <a href="course-enrollment.jsp" class="btn-link-custom">Enter Portal <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="feature-card">
+                    <i class="fas fa-lock secure-badge"></i>
+                    <div class="feature-icon"><i class="fas fa-user-shield"></i></div>
+                    <h4>Admin Panel</h4>
+                    <p>Approve pending requests and manage capacities using Insertion Sort.</p>
+                    <button onclick="openAuthModal('admin')" class="btn-link-custom">Secure Login <i class="fas fa-lock ms-1"></i></button>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="feature-card">
+                    <i class="fas fa-lock secure-badge"></i>
+                    <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
+                    <h4>Queue Reader</h4>
+                    <p>Monitor live FIFO queues and automated Waitlist Radar systems.</p>
+                    <button onclick="openAuthModal('radar')" class="btn-link-custom">Secure Login <i class="fas fa-lock ms-1"></i></button>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="feature-card" style="border-bottom: 4px solid var(--theme-orange);">
+                    <i class="fas fa-key secure-badge" style="color: var(--theme-orange);"></i>
+                    <div class="feature-icon" style="background: var(--theme-blue); color: white;"><i class="fas fa-chart-pie"></i></div>
+                    <h4>HOD Analytics</h4>
+                    <p>View demand forecasting and predictive module allocation charts.</p>
+                    <button onclick="openAuthModal('hod')" class="btn-link-custom" style="color: var(--theme-orange);">Authorize Access <i class="fas fa-arrow-right ms-1"></i></button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold" style="color: var(--sliit-navy);"><i class="fa-solid fa-shield-halved text-warning me-2"></i> System Authentication</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header border-0 pb-0">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-header d-flex flex-column align-items-center border-0 pt-2 pb-4">
+                <div class="feature-icon bg-white mt-2 mb-3" style="width: 60px; height: 60px; font-size: 25px;"><i class="fas fa-shield-alt"></i></div>
+                <h4 class="modal-title fw-bold" id="loginRoleTitle">Staff Authentication</h4>
+                <small class="text-white-50">Private Access Only. Students are restricted.</small>
+            </div>
 
-                <div id="loginError" class="alert alert-danger" style="display: none; font-size: 13px; border-radius: 12px; padding: 10px 15px;">
-                    <i class="fa-solid fa-circle-exclamation me-2"></i> Invalid credentials provided.
-                </div>
+            <div class="modal-body p-4 text-center">
+                <form id="loginForm">
+                    <input type="hidden" id="targetPortal">
 
-                <p class="text-muted" style="font-size: 13px; margin-bottom: 25px;">
-                    Restricted area. Please enter your administrator credentials to proceed.
-                </p>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text bg-light border-end-0"><i class="fas fa-envelope text-muted"></i></span>
+                        <input type="email" class="form-control bg-light border-start-0" id="userEmail" placeholder="Institutional Email" required>
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label" style="font-size: 13px; font-weight: 600;">Administrator Email</label>
-                    <input type="email" id="adminEmail" class="form-control" placeholder="Enter email address">
-                </div>
+                    <div class="input-group mb-4">
+                        <span class="input-group-text bg-light border-end-0"><i class="fas fa-key text-muted"></i></span>
+                        <input type="password" class="form-control bg-light border-start-0" id="userPassword" placeholder="Password" required>
+                    </div>
 
-                <div class="mb-4">
-                    <label class="form-label" style="font-size: 13px; font-weight: 600;">Secure Password</label>
-                    <input type="password" id="adminPassword" class="form-control" placeholder="Enter password">
-                </div>
-
-                <button type="button" class="btn-login-submit" onclick="attemptLogin()">
-                    Authenticate System <i class="fa-solid fa-arrow-right-to-bracket ms-1"></i>
-                </button>
+                    <button type="button" onclick="verifyCredentials()" class="btn btn-theme-primary w-100 py-2 fs-6">
+                        Login securely <i class="fas fa-sign-in-alt ms-2"></i>
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    // --- Modal Logic ---
-    let targetPageUrl = '';
+    const authModal = new bootstrap.Modal(document.getElementById('authModal'));
 
-    function openLoginModal(pageUrl) {
-        targetPageUrl = pageUrl;
-        document.getElementById('loginError').style.display = 'none';
-        document.getElementById('adminEmail').value = '';
-        document.getElementById('adminPassword').value = '';
-        var loginModal = new bootstrap.Modal(document.getElementById('adminLoginModal'));
-        loginModal.show();
+    function openAuthModal(portal) {
+        document.getElementById('targetPortal').value = portal;
+        document.getElementById('userEmail').value = '';
+        document.getElementById('userPassword').value = '';
+
+        let title = "Admin Login";
+        if(portal === 'radar') title = "Queue Reader Login";
+        if(portal === 'hod') title = "HOD Restricted Login";
+
+        document.getElementById('loginRoleTitle').innerText = title;
+        authModal.show();
     }
 
-    function attemptLogin() {
-        let email = document.getElementById('adminEmail').value;
-        let pass = document.getElementById('adminPassword').value;
+    function verifyCredentials() {
+        const email = document.getElementById('userEmail').value;
+        const password = document.getElementById('userPassword').value;
+        const target = document.getElementById('targetPortal').value;
 
-        // Password checks
-        if(email === 'admin@sliit.lk' && pass === 'admin123') {
-            window.location.href = targetPageUrl;
+        if(!email || !password) {
+            Swal.fire({ icon: 'warning', title: 'Empty Fields', text: 'Please enter your email and password.', confirmButtonColor: '#FF5E14' });
+            return;
+        }
+
+        // --- STRICT SECURITY CHECK ---
+        let isAuthenticated = false;
+        let redirectUrl = "";
+
+        // 1. Admin & Queue Reader Logic
+        if ((target === 'admin' || target === 'radar') && email === 'admin@sliit.lk' && password === 'admin123') {
+            isAuthenticated = true;
+            redirectUrl = target === 'admin' ? 'admin-dashboard.jsp' : 'waitlist-status.jsp';
+        }
+        // 2. HOD Logic
+        else if (target === 'hod' && email === 'hod@sliit.lk' && password === 'hod123') {
+            isAuthenticated = true;
+            redirectUrl = 'hod-analytics.jsp';
+        }
+
+        // Results
+        if (isAuthenticated) {
+            authModal.hide();
+            Swal.fire({
+                icon: 'success',
+                title: 'Access Granted',
+                text: 'Routing to secure dashboard...',
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true
+            }).then(() => {
+                window.location.href = redirectUrl;
+            });
         } else {
-            document.getElementById('loginError').style.display = 'block';
+            // Blocks students and wrong passwords
+            Swal.fire({
+                icon: 'error',
+                title: 'Access Denied',
+                text: 'Invalid credentials. Private use only. Students are strictly prohibited from accessing this area.',
+                confirmButtonColor: '#0F2239'
+            });
         }
     }
-
-    // --- Viva Clarification Logic (Admissions Alert) ---
-    function showAdmissionAlert() {
-        Swal.fire({
-            icon: 'info',
-            title: 'University Admissions System',
-            text: 'Admissions for new students are handled by a separate university system (apply.sliit.lk). This portal is strictly designed for Active Student Semester Module Registrations only.',
-            confirmButtonColor: '#3730a3',
-            confirmButtonText: 'Understood'
-        });
-    }
 </script>
-
 </body>
 </html>
