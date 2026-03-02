@@ -1,8 +1,4 @@
-<div align="center">
-  
-  <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMzM4YjZjZjM4MzNjYzE0MjA4Y2IyMzVjNjQ1YjI2YjY2YzY0ZDg4ZSZlcD12MV9pbnRlcm5hbF9naWZzX3NlYXJjaCZjdD1n/qgQUggAC3Pfv687qPC/giphy.gif" alt="Animated Education Banner" width="100%" style="border-radius: 15px;">
-
-  # 🎓 SLIIT Module Registration & Waitlist Management System
+# SLIIT Module Registration & Waitlist Management System
   
   **An Advanced, Database-Less University Portal Powered by Custom Data Structures**
 
