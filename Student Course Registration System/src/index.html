@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eduall - Your Education, Your Future</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom styles for specific elements like the curved background at the bottom */
+        .bg-wave {
+            background-color: #4F46E5;
+            border-top-left-radius: 50% 20%;
+            border-top-right-radius: 50% 20%;
+        }
+
+        /* Floating animation for the cards */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        .animate-float-delayed {
+            animation: float 4s ease-in-out infinite;
+            animation-delay: 2s;
+        }
+
+        /* Modal pop-in animation */
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .animate-pop-in {
+            animation: popIn 0.2s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 overflow-x-hidden">
+
+<!-- Navigation -->
+<nav class="container mx-auto px-6 py-5 flex justify-between items-center">
+    <div class="text-2xl font-extrabold text-indigo-700 flex items-center gap-2">
+        <i class="fa-solid fa-layer-group"></i> Eduall
+    </div>
+    <div class="hidden lg:flex space-x-10 font-medium text-slate-600">
+        <a href="#" class="text-indigo-600 border-b-2 border-indigo-600 pb-1">Home</a>
+        <a href="#" class="hover:text-indigo-600 transition">About Us</a>
+        <a href="#" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#" class="hover:text-indigo-600 transition">Courses</a>
+        <a href="#" class="hover:text-indigo-600 transition">How It Works</a>
+        <a href="#" class="hover:text-indigo-600 transition">Contact</a>
+    </div>
+    <div class="space-x-4 hidden md:flex items-center">
+        <button id="signInBtn" class="px-6 py-2.5 text-indigo-600 font-semibold hover:text-indigo-800 transition">Sign In</button>
+        <button id="loginBtn" class="px-7 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-md shadow-indigo-200 font-medium transition">Login</button>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<main class="container mx-auto px-6 py-12 md:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+    <!-- Left Content -->
+    <div class="space-y-8 z-10">
+        <div class="inline-flex bg-indigo-50 border border-indigo-100 text-indigo-700 px-4 py-2 rounded-md text-sm font-semibold items-center gap-2">
+            <i class="fa-solid fa-check-square text-indigo-500"></i> Smart Registration, Bright Future.
+        </div>
+
+        <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight text-slate-900">
+            Your <span class="text-indigo-600">Education,</span><br>
+            Your <span class="text-indigo-600">Future</span>
+        </h1>
+
+        <p class="text-slate-500 text-lg md:text-xl max-w-lg leading-relaxed">
+            Eduall is your all-in-one platform for course registration, academic management, and student success.
+        </p>
+
+        <div class="flex flex-wrap gap-4 pt-2">
+            <button class="px-8 py-3.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium shadow-xl shadow-indigo-200 transition flex items-center gap-2">
+                Get Started <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            <button class="px-8 py-3.5 border-2 border-indigo-100 text-indigo-600 rounded-lg hover:bg-indigo-50 font-medium transition flex items-center gap-2 bg-white">
+                Explore Courses <i class="fa-solid fa-book-open"></i>
+            </button>
+        </div>
+
+        <!-- Small feature list -->
+        <div class="flex flex-wrap gap-6 text-sm text-slate-600 pt-4 font-semibold">
+            <span class="flex items-center gap-2"><div class="p-1 bg-indigo-100 rounded text-indigo-600"><i class="fa-solid fa-envelope"></i></div> Easy Registration</span>
+            <span class="flex items-center gap-2"><div class="p-1 bg-blue-100 rounded text-blue-600"><i class="fa-solid fa-chart-line"></i></div> Track Progress</span>
+            <span class="flex items-center gap-2"><div class="p-1 bg-red-100 rounded text-red-500"><i class="fa-solid fa-bullseye"></i></div> Achieve Goals</span>
+        </div>
+    </div>
+
+    <!-- Right Image Area with Floating Cards -->
+    <div class="relative h-[500px] md:h-[600px] flex justify-center items-center mt-10 lg:mt-0">
+        <!-- Background Decorative Circle -->
+        <div class="absolute w-[400px] h-[400px] md:w-[500px] md:h-[500px] bg-indigo-600 rounded-full opacity-10 -z-10"></div>
+        <!-- Dotted Pattern Decoration -->
+        <div class="absolute top-10 right-10 text-indigo-200 text-4xl -z-10 tracking-widest leading-loose">::::<br>::::<br>::::</div>
+
+        <!-- The Student Image with Unsplash Link -->
+        <div class="relative z-10 w-[300px] h-[400px] md:w-[400px] md:h-[500px] rounded-[3rem] overflow-hidden border-8 border-white shadow-2xl bg-white">
+            <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=500&h=600&auto=format&fit=crop" alt="Student" class="w-full h-full object-cover object-top">
+        </div>
+
+        <!-- Floating Card 1: Courses (Top Left) -->
+        <div class="absolute top-12 left-0 md:-left-8 bg-white p-4 rounded-2xl shadow-xl z-20 flex items-center gap-4 animate-float border border-slate-50">
+            <div class="bg-indigo-100 p-3 rounded-xl text-indigo-600 text-xl"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div>
+                <div class="font-extrabold text-2xl">150+</div>
+                <div class="text-xs text-slate-500 font-medium">Courses Available</div>
+            </div>
+        </div>
+
+        <!-- Floating Card 2: Satisfaction (Bottom Left) -->
+        <div class="absolute bottom-20 left-4 md:-left-4 bg-white p-4 rounded-2xl shadow-xl z-20 flex flex-col gap-2 animate-float-delayed border border-slate-50">
+            <div class="bg-green-100 w-10 h-10 flex items-center justify-center rounded-xl text-green-500 text-lg"><i class="fa-solid fa-arrow-trend-up"></i></div>
+            <div>
+                <div class="font-extrabold text-2xl">98%</div>
+                <div class="text-xs text-slate-500 font-medium">Student Satisfaction</div>
+            </div>
+        </div>
+
+        <!-- Floating Card 3: Reviews (Top Right) -->
+        <div class="absolute top-8 right-0 md:-right-12 bg-white px-5 py-3 rounded-full shadow-xl z-20 flex items-center gap-3 animate-float-delayed border border-slate-50">
+            <div class="flex text-yellow-400 text-xs gap-1">
+                <span class="text-slate-800 font-bold text-base mr-1">4.8</span>
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+            </div>
+            <div class="text-[10px] text-slate-400 font-medium ml-2 border-l pl-3">From <span class="text-indigo-600 font-bold">2K+</span> Reviews</div>
+        </div>
+
+        <!-- Floating Card 4: Students Enrolled (Middle Right) -->
+        <div class="absolute top-1/2 right-0 md:-right-16 transform -translate-y-1/2 bg-white p-4 rounded-2xl shadow-xl z-20 flex flex-col gap-2 animate-float border border-slate-50">
+            <div class="bg-red-50 w-10 h-10 flex items-center justify-center rounded-xl text-red-400 text-lg"><i class="fa-solid fa-users"></i></div>
+            <div>
+                <div class="font-extrabold text-2xl">12K+</div>
+                <div class="text-xs text-slate-500 font-medium">Students Enrolled</div>
+            </div>
+        </div>
+
+        <div class="absolute top-1/3 -right-20 text-indigo-500 text-2xl transform -rotate-12 opacity-80"><i class="fa-solid fa-paper-plane"></i></div>
+    </div>
+</main>
+
+<!-- Features Section -->
+<section class="container mx-auto px-6 py-16 bg-white rounded-[2.5rem] shadow-sm border border-slate-100 relative z-20 -mb-16 mt-12 md:mt-24">
+    <div class="text-center mb-14">
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-3 text-slate-900">Everything You Need in One Platform</h2>
+        <p class="text-slate-500">Powerful tools and features designed for students</p>
+        <div class="w-16 h-1 bg-indigo-600 mx-auto mt-6 rounded-full"></div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <!-- Feature Cards (Shortened for brevity but kept layout intact) -->
+        <div class="p-8 border border-slate-100 rounded-3xl hover:shadow-xl hover:-translate-y-1 transition duration-300 bg-white">
+            <div class="w-14 h-14 bg-indigo-50 text-indigo-600 flex items-center justify-center rounded-2xl mb-6 text-2xl"><i class="fa-solid fa-square-check"></i></div>
+            <h3 class="font-bold mb-3 text-slate-800">Course Registration</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Browse and register for courses easily in just a few clicks.</p>
+        </div>
+        <div class="p-8 border border-slate-100 rounded-3xl hover:shadow-xl hover:-translate-y-1 transition duration-300 bg-white">
+            <div class="w-14 h-14 bg-emerald-50 text-emerald-500 flex items-center justify-center rounded-2xl mb-6 text-2xl"><i class="fa-regular fa-calendar-days"></i></div>
+            <h3 class="font-bold mb-3 text-slate-800">Academic Calendar</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Stay updated with important dates and deadlines.</p>
+        </div>
+        <div class="p-8 border border-slate-100 rounded-3xl hover:shadow-xl hover:-translate-y-1 transition duration-300 bg-white">
+            <div class="w-14 h-14 bg-orange-50 text-orange-400 flex items-center justify-center rounded-2xl mb-6 text-2xl"><i class="fa-solid fa-chart-simple"></i></div>
+            <h3 class="font-bold mb-3 text-slate-800">Track Progress</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Monitor your academic progress and performance.</p>
+        </div>
+        <div class="p-8 border border-slate-100 rounded-3xl hover:shadow-xl hover:-translate-y-1 transition duration-300 bg-white">
+            <div class="w-14 h-14 bg-blue-50 text-blue-500 flex items-center justify-center rounded-2xl mb-6 text-2xl"><i class="fa-solid fa-bell"></i></div>
+            <h3 class="font-bold mb-3 text-slate-800">Notifications</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Get real-time updates on courses, deadlines, and announcements.</p>
+        </div>
+        <div class="p-8 border border-slate-100 rounded-3xl hover:shadow-xl hover:-translate-y-1 transition duration-300 bg-white">
+            <div class="w-14 h-14 bg-red-50 text-red-400 flex items-center justify-center rounded-2xl mb-6 text-2xl"><i class="fa-solid fa-file-lines"></i></div>
+            <h3 class="font-bold mb-3 text-slate-800">Digital Resources</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Access study materials and resources anytime, anywhere.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Banner Footer -->
+<footer class="bg-wave pt-32 pb-16 mt-10">
+    <div class="container mx-auto px-6 text-white grid grid-cols-2 md:grid-cols-4 gap-10 text-center divide-x-0 md:divide-x divide-indigo-400/50">
+        <div class="flex flex-col items-center justify-center"><div class="text-4xl mb-3 opacity-90"><i class="fa-solid fa-graduation-cap text-indigo-200"></i></div><div class="text-4xl font-extrabold mb-1">150+</div><div class="text-indigo-200 text-sm font-medium">Courses</div></div>
+        <div class="flex flex-col items-center justify-center"><div class="text-4xl mb-3 opacity-90"><i class="fa-regular fa-user text-indigo-200"></i></div><div class="text-4xl font-extrabold mb-1">12K+</div><div class="text-indigo-200 text-sm font-medium">Students</div></div>
+        <div class="flex flex-col items-center justify-center"><div class="text-4xl mb-3 opacity-90"><i class="fa-solid fa-user-tie text-indigo-200"></i></div><div class="text-4xl font-extrabold mb-1">200+</div><div class="text-indigo-200 text-sm font-medium">Instructors</div></div>
+        <div class="flex flex-col items-center justify-center"><div class="text-4xl mb-3 opacity-90"><i class="fa-regular fa-star text-indigo-200"></i></div><div class="text-4xl font-extrabold mb-1">98%</div><div class="text-indigo-200 text-sm font-medium">Satisfaction Rate</div></div>
+    </div>
+</footer>
+
+<!-- ============================================== -->
+<!-- SIGN IN / REGISTRATION MODAL (Pop-up)          -->
+<!-- ============================================== -->
+<div id="registrationModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-pop-in">
+        <div class="bg-indigo-600 px-8 py-5 flex justify-between items-center text-white">
+            <div>
+                <h3 class="font-extrabold text-xl">Create Account</h3>
+                <p class="text-indigo-200 text-xs mt-1">Join the student portal today</p>
+            </div>
+            <button id="closeRegistrationBtn" class="text-indigo-200 hover:text-white hover:bg-indigo-500 rounded-full w-8 h-8 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        <form class="p-8 space-y-5">
+            <div><label class="block text-sm font-bold text-slate-700 mb-1">Full Name</label><div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"><i class="fa-regular fa-user"></i></div><input type="text" placeholder="e.g. Jane Doe" class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-600 outline-none bg-slate-50 focus:bg-white text-sm"></div></div>
+            <div><label class="block text-sm font-bold text-slate-700 mb-1">Registration Number</label><div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"><i class="fa-solid fa-hashtag"></i></div><input type="text" placeholder="e.g. IT21000000" class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-600 outline-none bg-slate-50 focus:bg-white text-sm"></div></div>
+            <div><label class="block text-sm font-bold text-slate-700 mb-1">Email Address</label><div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"><i class="fa-regular fa-envelope"></i></div><input type="email" placeholder="student@sliit.lk" class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-600 outline-none bg-slate-50 focus:bg-white text-sm"></div></div>
+            <div><label class="block text-sm font-bold text-slate-700 mb-1">Password</label><div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"><i class="fa-solid fa-lock"></i></div><input type="password" placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-600 outline-none bg-slate-50 focus:bg-white text-sm"></div></div>
+            <div class="pt-4"><button type="button" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 flex justify-center items-center gap-2">Register Now <i class="fa-solid fa-arrow-right"></i></button></div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================== -->
+<!-- LOGIN MODAL (Pop-up with Admin/User Tabs)      -->
+<!-- ============================================== -->
+<div id="loginModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-pop-in">
+
+        <!-- Modal Header -->
+        <div class="bg-indigo-600 px-8 py-5 flex justify-between items-center text-white">
+            <div>
+                <h3 class="font-extrabold text-xl">Welcome Back</h3>
+                <p id="loginSubtitle" class="text-indigo-200 text-xs mt-1">Sign in to your student account</p>
+            </div>
+            <button id="closeLoginBtn" class="text-indigo-200 hover:text-white hover:bg-indigo-500 rounded-full w-8 h-8 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Tab Navigation for Roles -->
+        <div class="flex border-b border-slate-100 bg-slate-50">
+            <button id="tabStudent" class="flex-1 py-4 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 bg-white transition focus:outline-none flex justify-center items-center gap-2">
+                <i class="fa-solid fa-user-graduate"></i> Student
+            </button>
+            <button id="tabAdmin" class="flex-1 py-4 text-sm font-bold text-slate-400 border-b-2 border-transparent hover:text-indigo-500 transition focus:outline-none flex justify-center items-center gap-2">
+                <i class="fa-solid fa-shield-halved"></i> Administrator
+            </button>
+        </div>
+
+        <!-- Modal Body / Form -->
+        <form class="p-8 space-y-5">
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-1">Email Address</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-regular fa-envelope"></i>
+                    </div>
+                    <input type="email" id="loginEmailInput" placeholder="student@sliit.lk" class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition bg-slate-50 focus:bg-white text-sm">
+                </div>
+            </div>
+
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <label class="block text-sm font-bold text-slate-700">Password</label>
+                    <a href="#" class="text-xs text-indigo-600 font-bold hover:underline">Forgot password?</a>
+                </div>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <input type="password" placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition bg-slate-50 focus:bg-white text-sm">
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="button" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 flex justify-center items-center gap-2">
+                    Login Securely <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript logic -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Modals Logic ---
+        const signInBtn = document.getElementById('signInBtn');
+        const loginBtn = document.getElementById('loginBtn');
+
+        const regModal = document.getElementById('registrationModal');
+        const loginModal = document.getElementById('loginModal');
+
+        const closeRegBtn = document.getElementById('closeRegistrationBtn');
+        const closeLoginBtn = document.getElementById('closeLoginBtn');
+
+        // Open Modals
+        signInBtn.addEventListener('click', (e) => { e.preventDefault(); regModal.classList.remove('hidden'); });
+        loginBtn.addEventListener('click', (e) => { e.preventDefault(); loginModal.classList.remove('hidden'); });
+
+        // Close Modals (X Button)
+        closeRegBtn.addEventListener('click', () => { regModal.classList.add('hidden'); });
+        closeLoginBtn.addEventListener('click', () => { loginModal.classList.add('hidden'); });
+
+        // Close Modals (Click Outside)
+        window.addEventListener('click', (e) => {
+            if (e.target === regModal) regModal.classList.add('hidden');
+            if (e.target === loginModal) loginModal.classList.add('hidden');
+        });
+
+        // --- Login Tabs Logic (Student vs Admin) ---
+        const tabStudent = document.getElementById('tabStudent');
+        const tabAdmin = document.getElementById('tabAdmin');
+        const loginEmailInput = document.getElementById('loginEmailInput');
+        const loginSubtitle = document.getElementById('loginSubtitle');
+
+        // Classes for Active and Inactive states
+        const activeTabClasses = "flex-1 py-4 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 bg-white transition focus:outline-none flex justify-center items-center gap-2";
+        const inactiveTabClasses = "flex-1 py-4 text-sm font-bold text-slate-400 border-b-2 border-transparent hover:text-indigo-500 transition focus:outline-none flex justify-center items-center gap-2";
+
+        tabStudent.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Update styling
+            tabStudent.className = activeTabClasses;
+            tabAdmin.className = inactiveTabClasses;
+            // Update Context
+            loginEmailInput.placeholder = "student@sliit.lk";
+            loginSubtitle.textContent = "Sign in to your student account";
+        });
+
+        tabAdmin.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Update styling
+            tabAdmin.className = activeTabClasses;
+            tabStudent.className = inactiveTabClasses;
+            // Update Context
+            loginEmailInput.placeholder = "admin@sliit.lk";
+            loginSubtitle.textContent = "Sign in to the administrative dashboard";
+        });
+    });
+</script>
+
+</body>
+</html>
