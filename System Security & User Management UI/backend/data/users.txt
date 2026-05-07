@@ -1,0 +1,3 @@
+d47d1156-c803-4dae-a30d-d495073b27cc,admin,admin123,ADMIN,true
+0bb38756-f226-468f-9f12-9c58961ea7bf,admin%40eduall.lk,admin1234,ADMIN,true
+8f6b0afd-456f-40d4-92b3-f4b1d15e8bf4,student_test01,test123,STUDENT,true
