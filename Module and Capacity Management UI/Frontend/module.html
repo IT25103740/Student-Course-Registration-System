@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Module Management</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Module & Capacity Management</h1>
+
+    <!-- FORM -->
+    <form action="ModuleServlet" method="post" class="form-box">
+
+        <input type="text" name="id" placeholder="Module ID" required>
+        <input type="text" name="name" placeholder="Module Name" required>
+        <input type="number" name="capacity" placeholder="Capacity" required>
+
+        <div class="btn-group">
+            <button type="submit" name="action" value="add" class="btn add">Add</button>
+            <button type="submit" name="action" value="update" class="btn update">Update</button>
+            <button type="submit" name="action" value="delete" class="btn delete">Delete</button>
+        </div>
+
+    </form>
+
+    <!-- TABLE -->
+    <h2>Available Modules</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Capacity</th>
+            <th>Enrolled</th>
+            <th>Available Seats</th>
+        </tr>
+        </thead>
+
+        <tbody id="moduleTable">
+        <!-- Dynamic data (later via JSP or JS) -->
+        </tbody>
+
+    </table>
+
+</div>
+
+</body>
+</html>
