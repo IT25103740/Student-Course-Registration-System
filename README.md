@@ -1,4 +1,4 @@
-# SLIIT Module Registration & Waitlist Management System
+# EduAll Module Registration & Waitlist Management System
   
   **An Advanced, Database-Less University Portal Powered by Custom Data Structures**
 
