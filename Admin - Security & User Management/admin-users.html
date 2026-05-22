@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Users')}"></head>
+<body>
+
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon"><i class="bi bi-mortarboard-fill"></i></div>
+        EduAll
+    </div>
+    <div class="sidebar-section">
+        <div class="sidebar-section-label">Navigation</div>
+        <a th:href="@{/admin-home}" class="nav-item"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+        <a th:href="@{/admin/users}" class="nav-item active"><i class="bi bi-people-fill"></i> Users</a>
+        <a th:href="@{/admin/modules}" class="nav-item"><i class="bi bi-journal-bookmark-fill"></i> Modules</a>
+    </div>
+    <div class="sidebar-footer">
+        <a th:href="@{/logout}" class="nav-item" style="color: var(--red-500);"><i class="bi bi-box-arrow-left"></i> Sign Out</a>
+    </div>
+</aside>
+
+<main class="main-content">
+    <div th:replace="~{fragments/toast :: toastContainer}"></div>
+
+    <div class="page-header animate-in">
+        <div class="page-header-text">
+            <h1 class="heading-xl">Users</h1>
+            <p class="body-md">Manage all institutional accounts and monitor authentication activity.</p>
+        </div>
+        <button class="btn-primary-pro" data-bs-toggle="modal" data-bs-target="#addUserModal">
+            <i class="bi bi-plus-lg"></i> Add User
+        </button>
+    </div>
+
+    <!-- Users Table -->
+    <div class="card-surface mb-5 animate-in delay-1">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                    <th style="width: 60px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 34px; height: 34px; border-radius: 8px; background: var(--bg-3); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; color: var(--text-0);"
+                                 th:text="${#strings.substring(user.username, 0, 1).toUpperCase()}">U</div>
+                            <div>
+                                <div style="font-weight: 600; color: var(--text-0);" th:text="${user.username}">Name</div>
+                                <div class="mono text-3" th:text="${user.userId}">ID</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge-pro"
+                              th:classappend="${user.role == 'ADMIN'} ? 'badge-blue' : (${user.role == 'MODERATOR'} ? 'badge-green' : 'badge-neutral')"
+                              th:text="${user.role}">ROLE</span>
+                    </td>
+                    <td>
+                        <button class="btn-ghost" style="padding: 0.35rem 0.75rem; font-size: 0.78rem;"
+                                th:data-uid="${user.userId}" onclick="openReset(this.getAttribute('data-uid'))">
+                            <i class="bi bi-key"></i> Reset Password
+                        </button>
+                    </td>
+                    <td>
+                        <form th:action="@{/admin/users/delete}" method="post" style="margin:0;"
+                              onsubmit="return confirm('Delete this user? This cannot be undone.')">
+                            <input type="hidden" name="userId" th:value="${user.userId}">
+                            <button type="submit" class="btn-icon danger"><i class="bi bi-trash3"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Auth Logs -->
+    <div class="animate-in delay-2">
+        <div class="heading-sm mb-3">Authentication Logs</div>
+        <div class="card-surface">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User</th>
+                        <th>Activity</th>
+                        <th>IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="log : ${logs}">
+                        <td class="mono text-3" th:text="${log.timestamp}">Time</td>
+                        <td style="font-weight: 600; color: var(--text-0);" th:text="${log.username}">User</td>
+                        <td>
+                            <span class="badge-pro"
+                                  th:classappend="${log.action == 'LOGIN_SUCCESS'} ? 'badge-green' : 'badge-red'"
+                                  th:text="${log.action}">ACTIVITY</span>
+                        </td>
+                        <td class="mono text-3" th:text="${log.ipAddress}">127.0.0.1</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content pro" style="padding: 2.5rem;">
+            <h2 class="heading-lg" style="margin-bottom: 0.4rem;">Add New User</h2>
+            <p class="body-sm" style="margin-bottom: 2rem;">Create a new institutional account with role assignment.</p>
+            <form th:action="@{/admin/users/add}" method="post">
+                <div style="margin-bottom: 1rem;">
+                    <label class="input-label">User ID</label>
+                    <input type="text" name="userId" class="input-pro" placeholder="e.g. STU-001" required>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label class="input-label">Full Name</label>
+                    <input type="text" name="username" class="input-pro" placeholder="Enter full name" required>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label class="input-label">Password</label>
+                    <input type="password" name="password" class="input-pro" placeholder="Set initial password" required>
+                </div>
+                <div style="margin-bottom: 1.75rem;">
+                    <label class="input-label">Role</label>
+                    <select name="role" class="input-pro">
+                        <option value="ADMIN">Administrator</option>
+                        <option value="MODERATOR">Moderator</option>
+                        <option value="STUDENT" selected>Student</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 0.75rem;">
+                    <button type="button" class="btn-ghost flex-grow-1" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn-primary-pro flex-grow-1">Create User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal fade" id="resetModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content pro" style="padding: 2.5rem;">
+            <h2 class="heading-lg" style="margin-bottom: 0.4rem;">Reset Password</h2>
+            <p class="body-sm" style="margin-bottom: 2rem;">Set a new password for <span id="resetIdDisplay" class="mono" style="color: var(--blue-500);"></span></p>
+            <form th:action="@{/admin/users/update-password}" method="post">
+                <input type="hidden" name="userId" id="resetUserId">
+                <div style="margin-bottom: 1.75rem;">
+                    <label class="input-label">New Password</label>
+                    <input type="password" name="newPassword" class="input-pro" placeholder="Enter new password" required>
+                </div>
+                <div style="display: flex; gap: 0.75rem;">
+                    <button type="button" class="btn-ghost flex-grow-1" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn-primary-pro flex-grow-1">Update Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function openReset(userId) {
+    document.getElementById('resetUserId').value = userId;
+    document.getElementById('resetIdDisplay').innerText = userId;
+    new bootstrap.Modal(document.getElementById('resetModal')).show();
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
