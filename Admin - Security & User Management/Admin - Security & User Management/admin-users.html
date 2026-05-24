@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Users')}"></head>
+<body>
+
+<!-- Custom CSS for Bell Animations, Modal Overlays, and Dynamic Toasts -->
+<style>
+    /* ── Notifications Custom CSS ── */
+    
+    /* Bell Vibration Animation */
+    @keyframes bellShake {
+        0%, 100% { transform: rotate(0); }
+        15%, 45%, 75% { transform: rotate(12deg); }
+        30%, 60%, 90% { transform: rotate(-12deg); }
+    }
+
+    .shake-bell {
+        animation: bellShake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    /* Floating Toast Animation */
+    @keyframes toastSlideIn {
+        from {
+            opacity: 0;
+            transform: translateX(100px) scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+        }
+    }
+
+    @keyframes toastSlideOut {
+        from {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(100px) scale(0.9);
+        }
+    }
+
+    .realtime-alert-toast {
+        pointer-events: auto;
+        min-width: 320px;
+        padding: 1.1rem 1.4rem;
+        background: rgba(17, 17, 19, 0.95);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+        animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .realtime-alert-toast.blue-border { border-left: 4px solid var(--blue-500); }
+    .realtime-alert-toast.red-border { border-left: 4px solid var(--red-500); }
+    .realtime-alert-toast.green-border { border-left: 4px solid var(--green-500); }
+    .realtime-alert-toast.amber-border { border-left: 4px solid var(--amber-500); }
+
+    .realtime-alert-toast.fade-out {
+        animation: toastSlideOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Bell Dropdown Styling */
+    .notif-dropdown-box {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 330px;
+        background: rgba(17, 17, 19, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5);
+        padding: 1.2rem;
+        z-index: 1000;
+        margin-top: 0.5rem;
+        text-align: left;
+    }
+
+    .notif-item {
+        border-bottom: 1px solid var(--border-subtle);
+        padding: 0.75rem 0;
+        display: flex;
+        gap: 0.65rem;
+        align-items: flex-start;
+        animation: notifItemFade 0.25s ease-out forwards;
+    }
+
+    @keyframes notifItemFade {
+        from { opacity: 0; transform: translateY(-5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .notif-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .notif-icon-circle {
+        width: 28px; height: 28px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+    }
+
+    .notif-icon-circle.blue { background: rgba(59, 130, 246, 0.1); color: var(--blue-500); }
+    .notif-icon-circle.amber { background: rgba(245, 158, 11, 0.1); color: var(--amber-500); }
+    .notif-icon-circle.red { background: rgba(239, 68, 68, 0.1); color: var(--red-500); }
+    .notif-icon-circle.green { background: rgba(16, 185, 129, 0.1); color: var(--green-500); }
+
+    /* Button Loading states */
+    .btn-loading-state {
+        pointer-events: none;
+        opacity: 0.8;
+    }
+
+    /* Pulse Notification Badge animation */
+    @keyframes badgePulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.18); }
+        100% { transform: scale(1); }
+    }
+
+    .badge-pulse-active {
+        animation: badgePulse 0.4s ease-out;
+    }
+
+    /* Warning Modal Styles */
+    .modal-content.custom-warn-modal {
+        background: var(--bg-1);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+        padding: 2.2rem;
+    }
+
+    @keyframes alertFloat {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+        100% { transform: translateY(0px); }
+    }
+</style>
+
+<div th:replace="~{fragments/sidebar-admin :: sidebar('users')}"></div>
+
+<main class="main-content">
+    <div th:replace="~{fragments/toast :: toastContainer}"></div>
+
+    <div class="page-header animate-in">
+        <div class="page-header-text">
+            <h1 class="heading-xl">Users</h1>
+            <p class="body-md">Manage all institutional accounts and monitor authentication activity.</p>
+        </div>
+        
+        <!-- Header Actions: Notifications Bell & Add User Button -->
+        <div style="display: flex; align-items: center; gap: 0.8rem; position: relative;">
+            
+            <!-- Notification Bell Icon Trigger -->
+            <button class="btn-ghost" id="bellNotificationBtn" data-bs-toggle="modal" data-bs-target="#notificationsModal" style="padding: 0.55rem; font-size: 1.25rem; border-radius: var(--radius-md); position: relative; border: 1px solid var(--border-subtle); background: var(--bg-1); display: flex; align-items: center; justify-content: center; height: 38px; width: 38px;">
+                <i class="bi bi-bell-fill" id="notif-bell-icon" style="color: var(--text-2); transition: color 0.2s;"></i>
+                <!-- Red pulsating badge count -->
+                <span class="badge bg-danger rounded-circle position-absolute" id="notificationBadge" style="top: -4px; right: -4px; font-size: 0.62rem; padding: 2.5px 5px; font-family: sans-serif; display: none;">0</span>
+            </button>
+            
+            <button class="btn-primary-pro" data-bs-toggle="modal" data-bs-target="#addUserModal" style="height: 38px; display: flex; align-items: center; gap: 0.4rem;">
+                <i class="bi bi-plus-lg"></i> Add User
+            </button>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="card-surface mb-5 animate-in delay-1">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                    <th style="width: 60px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 34px; height: 34px; border-radius: 8px; background: var(--bg-3); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; color: var(--text-0);"
+                                 th:text="${#strings.substring(user.username, 0, 1).toUpperCase()}">U</div>
+                            <div>
+                                <div style="font-weight: 600; color: var(--text-0);" th:text="${user.username}">Name</div>
+                                <div class="mono text-3" th:text="${user.userId}">ID</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge-pro"
+                              th:classappend="${user.role == 'ADMIN'} ? 'badge-blue' : (${user.role == 'MODERATOR'} ? 'badge-green' : 'badge-neutral')"
+                              th:text="${user.role}">ROLE</span>
+                    </td>
+                    <td>
+                        <button class="btn-ghost" style="padding: 0.35rem 0.75rem; font-size: 0.78rem;"
+                                th:data-uid="${user.userId}" onclick="openReset(this.getAttribute('data-uid'))">
+                            <i class="bi bi-key"></i> Reset Password
+                        </button>
+                    </td>
+                    <td>
+                        <!-- Redesigned Delete Form: Submits dynamically on custom modal confirmation -->
+                        <form th:action="@{/admin/users/delete}" method="post" th:id="'delete-form-' + ${user.userId}" style="margin:0;">
+                            <input type="hidden" name="userId" th:value="${user.userId}">
+                            <button type="button" class="btn-icon danger" 
+                                    th:data-uid="${user.userId}" 
+                                    th:data-uname="${user.username}" 
+                                    onclick="openDeleteConfirm(this.getAttribute('data-uid'), this.getAttribute('data-uname'))">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Auth Logs -->
+    <div class="animate-in delay-2">
+        <div class="heading-sm mb-3">Authentication Logs</div>
+        <div class="card-surface">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User</th>
+                        <th>Activity</th>
+                        <th>IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="log : ${logs}">
+                        <td class="mono text-3" th:text="${log.timestamp}">Time</td>
+                        <td style="font-weight: 600; color: var(--text-0);" th:text="${log.username}">User</td>
+                        <td>
+                            <span class="badge-pro"
+                                  th:classappend="${log.action == 'LOGIN_SUCCESS'} ? 'badge-green' : 'badge-red'"
+                                  th:text="${log.action}">ACTIVITY</span>
+                        </td>
+                        <td class="mono text-3" th:text="${log.ipAddress}">127.0.0.1</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- Floating Real-Time Toast Notifications Container -->
+<div id="realtimeToastContainer" style="position: fixed; top: 90px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 0.8rem; pointer-events: none;"></div>
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content pro" style="padding: 2.5rem;">
+            <h2 class="heading-lg" style="margin-bottom: 0.4rem;">Add New User</h2>
+            <p class="body-sm" style="margin-bottom: 2rem;">Create a new institutional account with role assignment.</p>
+            <form th:action="@{/admin/users/add}" method="post" id="addUserForm" onsubmit="handleCreateUserSubmit(event)">
+                <div style="margin-bottom: 1rem;">
+                    <label class="input-label">User ID</label>
+                    <input type="text" name="userId" id="addUserId" class="input-pro" placeholder="e.g. STU-001" required>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label class="input-label">Full Name</label>
+                    <input type="text" name="username" id="addUsername" class="input-pro" placeholder="Enter full name" required>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label class="input-label">Password</label>
+                    <input type="password" name="password" class="input-pro" placeholder="Set initial password" required>
+                </div>
+                <div style="margin-bottom: 1.75rem;">
+                    <label class="input-label">Role</label>
+                    <select name="role" id="addUserRole" class="input-pro">
+                        <option value="ADMIN">Administrator</option>
+                        <option value="MODERATOR">Moderator</option>
+                        <option value="STUDENT" selected>Student</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 0.75rem;">
+                    <button type="button" class="btn-ghost flex-grow-1" data-bs-dismiss="modal" id="addCancelBtn">Cancel</button>
+                    <button type="submit" class="btn-primary-pro flex-grow-1" id="addSubmitBtn">Create User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal fade" id="resetModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content pro" style="padding: 2.5rem;">
+            <h2 class="heading-lg" style="margin-bottom: 0.4rem;">Reset Password</h2>
+            <p class="body-sm" style="margin-bottom: 2rem;">Set a new password for <span id="resetIdDisplay" class="mono" style="color: var(--blue-500);"></span></p>
+            <form th:action="@{/admin/users/update-password}" method="post" id="resetPasswordForm" onsubmit="handleResetPasswordSubmit(event)">
+                <input type="hidden" name="userId" id="resetUserId">
+                <div style="margin-bottom: 1.75rem;">
+                    <label class="input-label">New Password</label>
+                    <input type="password" name="newPassword" class="input-pro" placeholder="Enter new password" required>
+                </div>
+                <div style="display: flex; gap: 0.75rem;">
+                    <button type="button" class="btn-ghost flex-grow-1" data-bs-dismiss="modal" id="resetCancelBtn">Cancel</button>
+                    <button type="submit" class="btn-primary-pro flex-grow-1" id="resetSubmitBtn">
+                        Update Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Redesigned Custom Deletion Warning Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-warn-modal">
+            <div class="text-center mb-4">
+                <div style="font-size: 3.5rem; color: var(--red-500); animation: alertFloat 2s ease-in-out infinite;">
+                    <i class="bi bi-person-x-fill"></i>
+                </div>
+                <h3 class="heading-lg mt-3" id="deleteConfirmModalLabel" style="font-weight: 850; letter-spacing: -0.03em;">Delete Account?</h3>
+            </div>
+            
+            <p class="body-sm text-center mb-4" style="line-height: 1.6; color: var(--text-2); font-size:0.9rem;">
+                Are you sure you want to delete user <span id="deleteUsernameDisplay" class="mono text-0" style="font-weight:700;"></span>? This action is absolute and cannot be undone. All active sessions for this account will be terminated.
+            </p>
+            
+            <div style="display: flex; gap: 0.9rem;">
+                <button type="button" class="btn-ghost flex-grow-1" data-bs-dismiss="modal" id="deleteCancelBtn" style="padding: 0.8rem; font-weight:700;">Cancel</button>
+                <button type="button" class="btn-primary-pro flex-grow-1" id="deleteConfirmSubmitBtn" onclick="executeUserDeletion()" style="background: var(--red-500); border-color: var(--red-500); padding: 0.8rem; font-weight:700;">Delete Account</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Redesigned Notifications Popup Modal -->
+<div class="modal fade" id="notificationsModal" tabindex="-1" aria-labelledby="notificationsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content pro" style="padding: 2.2rem; background: var(--bg-1); border: 1px solid var(--border-strong); box-shadow: 0 25px 65px rgba(0, 0, 0, 0.55); border-radius: var(--radius-lg);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                <h3 class="heading-lg m-0" id="notificationsModalLabel" style="font-weight: 850; letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.6rem;">
+                    <i class="bi bi-bell-fill text-primary" style="font-size: 1.4rem;"></i> Notifications Panel
+                </h3>
+                <span style="font-size: 0.8rem; color: var(--blue-500); cursor: pointer; font-weight:700;" onclick="clearAllNotifications()">Clear All</span>
+            </div>
+            
+            <div id="notificationsList" style="min-height: 200px; max-height: 380px; overflow-y: auto; padding-right: 0.25rem;">
+                <div id="emptyNotificationsMsg" class="text-center text-3 py-5">
+                    <i class="bi bi-bell-slash" style="font-size: 2.5rem; display: block; margin-bottom: 1rem; opacity: 0.3;"></i>
+                    No new notifications in registry.
+                </div>
+            </div>
+            
+            <div style="margin-top: 1.75rem; display: flex; justify-content: flex-end;">
+                <button type="button" class="btn-primary-pro" data-bs-dismiss="modal" style="padding: 0.65rem 2rem; font-weight: 700;">Close Panel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Notifications & Interactions Core Scripting -->
+<script>
+    // State management for notifications
+    let notificationsCount = 0;
+    let notificationsStore = [];
+    try {
+        const storedNotifs = localStorage.getItem('eduall_notifications_history');
+        if (storedNotifs) {
+            notificationsStore = JSON.parse(storedNotifs);
+        }
+    } catch (e) {
+        console.error("Error loading notification history:", e);
+    }
+
+    // Cache target user ID to delete
+    let targetDeleteUserId = null;
+    let targetDeleteUsername = null;
+    let deleteConfirmModalInstance = null;
+
+    function clearAllNotifications() {
+        notificationsCount = 0;
+        notificationsStore.length = 0;
+        try {
+            localStorage.removeItem('eduall_notifications_history');
+        } catch (e) {
+            console.error("Error clearing notifications history:", e);
+        }
+        
+        // Hide badge count
+        const badge = document.getElementById('notificationBadge');
+        if (badge) {
+            badge.textContent = "0";
+            badge.style.display = 'none';
+        }
+        
+        // Update List
+        renderNotificationsList();
+    }
+
+    function renderNotificationsList() {
+        const list = document.getElementById('notificationsList');
+        if (!list) return;
+
+        if (notificationsStore.length === 0) {
+            list.innerHTML = `<div id="emptyNotificationsMsg" class="text-center text-3 py-4">No new notifications.</div>`;
+        } else {
+            let html = '';
+            // Display newest first
+            for (let i = notificationsStore.length - 1; i >= 0; i--) {
+                const notif = notificationsStore[i];
+                html += `
+                    <div class="notif-item">
+                        <div class="notif-icon-circle ${notif.type === 'SUCCESS' ? 'blue' : notif.type === 'DANGER' ? 'red' : (notif.type === 'WARNING' || notif.type === 'AMBER' ? 'amber' : 'green')}">
+                            <i class="${notif.icon}"></i>
+                        </div>
+                        <div style="flex-grow:1;">
+                            <div style="font-weight:750; color:var(--text-0);">${notif.title}</div>
+                            <div class="text-3 mt-1" style="font-size:0.75rem;">${notif.desc}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            list.innerHTML = html;
+        }
+    }
+
+    function addNotification(notif) {
+        notificationsStore.push(notif);
+        try {
+            localStorage.setItem('eduall_notifications_history', JSON.stringify(notificationsStore));
+        } catch (e) {
+            console.error("Error saving notifications:", e);
+        }
+        notificationsCount++;
+        
+        // Update Badge Count
+        const badge = document.getElementById('notificationBadge');
+        if (badge) {
+            badge.textContent = notificationsCount;
+            badge.style.display = 'block';
+            badge.classList.remove('badge-pulse-active');
+            void badge.offsetWidth; // trigger reflow
+            badge.classList.add('badge-pulse-active');
+        }
+
+        // Glow bell active
+        const bellIcon = document.getElementById('notif-bell-icon');
+        if (bellIcon) {
+            bellIcon.style.color = 'var(--blue-500)';
+            
+            // Shaking vibration trigger
+            const bellBtn = document.getElementById('bellNotificationBtn');
+            if (bellBtn) {
+                bellBtn.classList.remove('shake-bell');
+                void bellBtn.offsetWidth; // trigger reflow
+                bellBtn.classList.add('shake-bell');
+            }
+        }
+
+        renderNotificationsList();
+    }
+
+    function spawnRealtimeAlertToast(title, message, borderStyle = 'blue-border') {
+        const container = document.getElementById('realtimeToastContainer');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `realtime-alert-toast ${borderStyle}`;
+        
+        let iconHtml = '<i class="bi bi-shield-fill-check"></i>';
+        if (borderStyle === 'red-border') {
+            iconHtml = '<i class="bi bi-person-dash-fill"></i>';
+        } else if (borderStyle === 'green-border') {
+            iconHtml = '<i class="bi bi-person-plus-fill"></i>';
+        } else if (borderStyle === 'amber-border') {
+            iconHtml = '<i class="bi bi-exclamation-triangle-fill" style="color: var(--amber-500);"></i>';
+        }
+
+        toast.innerHTML = `
+            <div style="font-size: 1.4rem; color: inherit;">${iconHtml}</div>
+            <div>
+                <div style="font-weight: 800; color: var(--text-0); font-size: 0.82rem;">${title}</div>
+                <div style="font-size: 0.78rem; color: var(--text-2); margin-top: 0.15rem;">${message}</div>
+            </div>
+        `;
+
+        container.appendChild(toast);
+
+        // Slide out and remove toast after 3 seconds
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }, 3000);
+    }
+
+    // Intercept Add User Form Submission
+    function handleCreateUserSubmit(event) {
+        event.preventDefault(); // Intercept form
+        
+        const form = event.target;
+        const submitBtn = document.getElementById('addSubmitBtn');
+        const cancelBtn = document.getElementById('addCancelBtn');
+        const userId = document.getElementById('addUserId').value;
+        const username = document.getElementById('addUsername').value;
+        const role = document.getElementById('addUserRole').value;
+
+        if (!submitBtn || !form) return;
+
+        // Button Loading transition
+        submitBtn.disabled = true;
+        cancelBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-1" style="width:0.85rem; height:0.85rem;" role="status"></span> Instantiating...`;
+
+        // 1. Spawning gorgeous real-time alert toast
+        spawnRealtimeAlertToast("Real-Time Notification", `New ${role.toLowerCase()} account created for ${username}.`, "green-border");
+
+        // 2. Increment Bell notification and add to active lists
+        addNotification({
+            title: "Account Created",
+            desc: `User ${userId} (${username}) added with role: ${role}.`,
+            icon: "bi-person-plus-fill",
+            type: "SUCCESS"
+        });
+
+        // 3. Delay final form execution by 1.2 seconds for animation success
+        setTimeout(() => {
+            form.submit(); // submit form programmatically to create user in DB
+        }, 1250);
+    }
+
+    // Intercept Reset Password Form Submission
+    function handleResetPasswordSubmit(event) {
+        event.preventDefault(); // Intercept form
+        
+        const form = event.target;
+        const submitBtn = document.getElementById('resetSubmitBtn');
+        const cancelBtn = document.getElementById('resetCancelBtn');
+        const userId = document.getElementById('resetUserId').value;
+        
+        if (!submitBtn || !form) return;
+
+        // Transition button to loading
+        submitBtn.disabled = true;
+        cancelBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-1" style="width:0.85rem; height:0.85rem;" role="status"></span> Updating...`;
+
+        // 1. Spawning gorgeous real-time alert toast
+        spawnRealtimeAlertToast("Real-Time Notification", `Password reset triggered successfully for user ${userId}.`, "blue-border");
+
+        // 2. Increment Bell notification and add to active lists
+        addNotification({
+            title: "Password Changed",
+            desc: `Security credentials updated for user: ${userId}.`,
+            icon: "bi-key-fill",
+            type: "SUCCESS"
+        });
+
+        // 3. Delay final form execution by 1.2 seconds for animation success
+        setTimeout(() => {
+            form.submit(); // submit form programmatically to update database
+        }, 1250);
+    }
+
+    // Deletion Modal Activation Logic
+    function openDeleteConfirm(userId, username) {
+        targetDeleteUserId = userId;
+        targetDeleteUsername = username;
+        
+        document.getElementById('deleteUsernameDisplay').innerText = `${username} (${userId})`;
+        
+        if (!deleteConfirmModalInstance) {
+            deleteConfirmModalInstance = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+        }
+        deleteConfirmModalInstance.show();
+    }
+
+    function executeUserDeletion() {
+        if (!targetDeleteUserId) return;
+        
+        const submitBtn = document.getElementById('deleteConfirmSubmitBtn');
+        const cancelBtn = document.getElementById('deleteCancelBtn');
+        
+        if (!submitBtn) return;
+
+        // Transition button to loading state
+        submitBtn.disabled = true;
+        cancelBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-1" style="width:0.85rem; height:0.85rem;" role="status"></span> Deleting...`;
+
+        // 1. Spawning real-time warning toast alert
+        spawnRealtimeAlertToast("Security Alert", `User account ${targetDeleteUsername} (${targetDeleteUserId}) was successfully deleted.`, "red-border");
+
+        // 2. Increment Bell notification and add to active lists
+        addNotification({
+            title: "Account Deleted",
+            desc: `User ${targetDeleteUserId} (${targetDeleteUsername}) deleted from domain registry.`,
+            icon: "bi-person-x-fill",
+            type: "DANGER"
+        });
+
+        // 3. Delay final form execution by 1.25 seconds for animation success
+        setTimeout(() => {
+            if (deleteConfirmModalInstance) deleteConfirmModalInstance.hide();
+            
+            // Submit target form programmatically to delete from database
+            const form = document.getElementById(`delete-form-${targetDeleteUserId}`);
+            if (form) form.submit();
+        }, 1250);
+    }
+
+    function openReset(userId) {
+        document.getElementById('resetUserId').value = userId;
+        document.getElementById('resetIdDisplay').innerText = userId;
+        new bootstrap.Modal(document.getElementById('resetModal')).show();
+    }
+
+    // Process queue of password reset requests from student profile
+    function checkPendingStudentRequests() {
+        try {
+            const queueStr = localStorage.getItem('eduall_pending_reset_requests');
+            if (!queueStr) return;
+            const queue = JSON.parse(queueStr);
+            if (!Array.isArray(queue) || queue.length === 0) return;
+            
+            queue.forEach(req => {
+                // Add to administrator's bell list
+                addNotification({
+                    title: "Reset Request",
+                    desc: req.desc || `Student ${req.studentName} (${req.studentId}) requested a password reset.`,
+                    icon: "bi-key-fill",
+                    type: "WARNING"
+                });
+                
+                // Spawn a beautiful real-time toast alert
+                spawnRealtimeAlertToast(
+                    "Reset Request Received", 
+                    `${req.studentName} (${req.studentId}) has requested a portal password reset.`, 
+                    "amber-border"
+                );
+            });
+            
+            // Clear queue immediately to avoid duplicate processing
+            localStorage.removeItem('eduall_pending_reset_requests');
+        } catch (e) {
+            console.error("Error reading student password reset queue:", e);
+        }
+    }
+
+    // Listen for storage events to support real-time cross-tab synchronization
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'eduall_pending_reset_requests') {
+            checkPendingStudentRequests();
+        }
+    });
+
+    // Run queue check immediately when the document is fully ready
+    document.addEventListener('DOMContentLoaded', function() {
+        renderNotificationsList();
+        checkPendingStudentRequests();
+
+        // Reset notification count badge when modal popup is shown
+        const modal = document.getElementById('notificationsModal');
+        if (modal) {
+            modal.addEventListener('show.bs.modal', function() {
+                notificationsCount = 0;
+                const badge = document.getElementById('notificationBadge');
+                if (badge) {
+                    badge.textContent = "0";
+                    badge.style.display = 'none';
+                }
+                const bellIcon = document.getElementById('notif-bell-icon');
+                if (bellIcon) bellIcon.style.color = 'var(--text-2)';
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
