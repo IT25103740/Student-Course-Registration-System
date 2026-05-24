@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 /**
  * StudentProfile Model - Member 2 (Weerasekara G.W.D.S)
  * Stores extended academic profile data separate from auth credentials.
- * 
+ 
  * OOP: Implements FilePersistable (Abstraction via Interface).
  * Encapsulation: All fields are private, accessed only via getters/setters.
  */
