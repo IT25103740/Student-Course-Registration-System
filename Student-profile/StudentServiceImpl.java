@@ -48,7 +48,7 @@ public class StudentServiceImpl implements IStudentService {
         
         if (moduleOpt.isPresent()) {
             CourseModule module = moduleOpt.get();
-            // Real-Time Validation: Count both APPROVED and PENDING requests to prevent over-subscription
+            // Real-Time Validation: Count both APPROVED and PENDING requests to prevent over-subscription.
             long activeRequests = requestRepository.findAll().stream()
                     .filter(r -> r.getModuleCode().equals(moduleCode) && 
                             ("APPROVED".equals(r.getStatus()) || "PENDING".equals(r.getStatus())))
@@ -116,13 +116,13 @@ public class StudentServiceImpl implements IStudentService {
 
     @Override
     public Optional<StudentProfile> getProfile(String studentId) {
-        // Fix: Use findById to match stable repository
+        // Fix: Use findById to match stable repository.
         return profileRepository.findById(studentId);
     }
 
     @Override
     public boolean updateContactInfo(String studentId, String email, String phone) {
-        // Fix: Use findById to match stable repository
+        // Fix: Use findById to match stable repository.
         Optional<StudentProfile> opt = profileRepository.findById(studentId);
         if (opt.isPresent()) {
             StudentProfile profile = opt.get();
@@ -136,7 +136,7 @@ public class StudentServiceImpl implements IStudentService {
 
     @Override
     public boolean deactivateProfile(String studentId) {
-        // Fix: Use findById to match stable repository
+        // Fix: Use findById to match stable repository.
         Optional<StudentProfile> opt = profileRepository.findById(studentId);
         if (opt.isPresent()) {
             StudentProfile profile = opt.get();
